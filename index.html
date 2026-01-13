@@ -3,103 +3,350 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Тест (demo)</title>
+  <title>FS Annual Control</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;max-width:760px;margin:24px auto;padding:0 16px}
-    .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:14px 0}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    label{display:block;margin:6px 0}
-    button{padding:10px 14px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    #result{white-space:pre-wrap}
+    :root{
+      --bg:#f6edd4;
+      --card:#fff;
+      --text:#111;
+      --muted:#6b6b6b;
+      --line:#e0e0e0;
+      --accent:#f2b400;
+      --danger:#d93025;
+      --btn:#1a73e8;
+    }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .wrap{max-width:840px;margin:24px auto;padding:0 14px;}
+    .hero{
+      border-radius:10px;
+      overflow:hidden;
+      background:#0b3d91;
+      height:155px;
+      margin-bottom:14px;
+      display:flex;
+      align-items:flex-end;
+      padding:16px;
+      box-shadow:0 1px 0 rgba(0,0,0,.06);
+      position:relative;
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(circle at 65% 40%, rgba(0,255,255,.35), transparent 35%),
+                  radial-gradient(circle at 35% 55%, rgba(255,153,0,.40), transparent 40%),
+                  linear-gradient(120deg, rgba(255,0,153,.25), transparent 45%);
+      mix-blend-mode:screen;
+    }
+    .brand{
+      position:relative;
+      font-weight:700;
+      letter-spacing:.6px;
+      color:#fff;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      z-index:1;
+    }
+    .brand-badge{
+      width:26px;height:26px;border-radius:6px;
+      background:rgba(255,255,255,.18);
+      display:inline-flex;align-items:center;justify-content:center;
+      font-weight:800;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:12px;
+      box-shadow:0 1px 0 rgba(0,0,0,.05);
+      margin:12px 0;
+      overflow:hidden;
+    }
+    .card-topline{height:8px;background:var(--accent);}
+    .card-body{padding:18px 20px;}
+    h1{margin:0 0 6px 0;font-size:38px;line-height:1.1;}
+    .sub a{color:#1a73e8;text-decoration:underline;}
+    .sub{margin:0;color:#1a73e8;font-style:italic;}
+    .req-note{color:var(--danger);margin-top:14px}
+    .field-title{font-weight:700;font-size:20px;margin:0 0 6px 0;}
+    .field-help{color:var(--muted);font-style:italic;margin:0 0 14px 0;}
+    .required{color:var(--danger);margin-left:4px}
+    .select, input[type="text"], input[type="email"]{
+      width:320px; max-width:100%;
+      padding:12px 14px;
+      border:1px solid #cfcfcf;
+      border-radius:8px;
+      font-size:16px;
+      outline:none;
+      background:#fff;
+    }
+    .select:focus, input:focus{border-color:#8ab4f8; box-shadow:0 0 0 3px rgba(26,115,232,.15);}
+    .row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+    .actions{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px 20px;
+    }
+    .btn{
+      background:var(--btn);
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      padding:10px 18px;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .link{
+      background:none;border:none;color:#d97706;
+      cursor:pointer;font-size:16px;
+    }
+    .link:hover{text-decoration:underline}
+    .hidden{display:none !important;}
+
+    /* Quiz styles */
+    .q{margin:18px 0}
+    .q h2{margin:0 0 8px 0;font-size:20px}
+    .q p{margin:0 0 10px 0}
+    .opt{display:block;margin:8px 0;color:#222}
+    .resultBox{white-space:pre-wrap;color:#111}
+    .error{color:var(--danger)}
+    .smallmuted{color:var(--muted);font-size:13px;margin-top:10px}
   </style>
 </head>
 <body>
-  <h1>Тест (демо)</h1>
+  <div class="wrap">
 
-  <div class="card">
-    <div class="row">
-      <div>
-        <label>Имя
-          <input id="name" type="text" style="width:100%;padding:8px" placeholder="Иван">
-        </label>
-      </div>
-      <div>
-        <label>Email (необязательно)
-          <input id="email" type="email" style="width:100%;padding:8px" placeholder="ivan@mail.com">
-        </label>
+    <!-- Header image / brand -->
+    <div class="hero">
+      <div class="brand">
+        <span class="brand-badge">N</span>
+        <span>NOVOMET</span>
       </div>
     </div>
-  </div>
 
-  <form id="quiz" class="card">
-    <h2>Вопрос 1</h2>
-    <p>2 + 2 = ?</p>
-    <label><input type="radio" name="q1" value="a"> 3</label>
-    <label><input type="radio" name="q1" value="b"> 4</label>
-    <label><input type="radio" name="q1" value="c"> 5</label>
+    <!-- Title card -->
+    <div class="card">
+      <div class="card-topline"></div>
+      <div class="card-body">
+        <h1>FS Annual Control</h1>
+        <p class="sub"><a href="javascript:void(0)">NLS-QHSE-P80 tests (Stage 3)</a></p>
+        <div class="req-note">* Indicates required question</div>
+      </div>
+    </div>
 
-    <h2>Вопрос 2</h2>
-    <p>Столица Испании?</p>
-    <label><input type="radio" name="q2" value="a"> Мадрид</label>
-    <label><input type="radio" name="q2" value="b"> Барселона</label>
-    <label><input type="radio" name="q2" value="c"> Валенсия</label>
+    <!-- SCREEN 1: Location -->
+    <div id="screenLocation" class="card">
+      <div class="card-body">
+        <div class="field-title">Novomet Location<span class="required">*</span></div>
+        <div class="field-help">Select your location</div>
 
-    <h2>Вопрос 3</h2>
-    <p>HTML — это…</p>
-    <label><input type="radio" name="q3" value="a"> Язык программирования</label>
-    <label><input type="radio" name="q3" value="b"> База данных</label>
-    <label><input type="radio" name="q3" value="c"> Язык разметки</label>
+        <select id="location" class="select" required>
+          <option value="" selected>Choose</option>
+          <option>Argentina</option>
+          <option>Canada</option>
+          <option>Colombia</option>
+          <option>Ecuador</option>
+          <option>Egypt</option>
+          <option>HQ (Russia)</option>
+          <option>India</option>
+          <option>Indonesia</option>
+          <option>Iraq (FS Basra)</option>
+          <option>Iraq (FS Erbil)</option>
+          <option>Iraq (Maintenance)</option>
+          <option>KSA</option>
+          <option>Libya</option>
+          <option>Turkey</option>
+          <option>UAE</option>
+          <option>USA</option>
+          <option>Venezuela</option>
+        </select>
 
-    <br>
-    <button id="submitBtn" type="submit">Отправить</button>
-  </form>
+        <div class="actions" style="padding-left:0;padding-right:0;margin-top:10px;">
+          <button id="nextBtn" class="btn" disabled>Next</button>
+          <button id="clearBtn1" class="link" type="button">Clear form</button>
+        </div>
 
-  <div class="card">
-    <h2>Результат</h2>
-    <div id="result">Пока пусто.</div>
+        <div class="smallmuted">Never submit passwords through this form.</div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: Quiz -->
+    <div id="screenQuiz" class="hidden">
+
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <label>
+              Имя (необязательно)
+              <br>
+              <input id="name" type="text" placeholder="Ivan" />
+            </label>
+            <label>
+              Email (необязательно)
+              <br>
+              <input id="email" type="email" placeholder="ivan@mail.com" />
+            </label>
+          </div>
+          <div class="smallmuted">Локация: <b id="locationLabel"></b></div>
+        </div>
+      </div>
+
+      <form id="quiz" class="card">
+        <div class="card-body">
+
+          <div class="q">
+            <h2>Question 1</h2>
+            <p>2 + 2 = ?</p>
+            <label class="opt"><input type="radio" name="q1" value="a" required> 3</label>
+            <label class="opt"><input type="radio" name="q1" value="b"> 4</label>
+            <label class="opt"><input type="radio" name="q1" value="c"> 5</label>
+          </div>
+
+          <div class="q">
+            <h2>Question 2</h2>
+            <p>Столица Испании?</p>
+            <label class="opt"><input type="radio" name="q2" value="a" required> Мадрид</label>
+            <label class="opt"><input type="radio" name="q2" value="b"> Барселона</label>
+            <label class="opt"><input type="radio" name="q2" value="c"> Валенсия</label>
+          </div>
+
+          <div class="q">
+            <h2>Question 3</h2>
+            <p>HTML — это…</p>
+            <label class="opt"><input type="radio" name="q3" value="a" required> Язык программирования</label>
+            <label class="opt"><input type="radio" name="q3" value="b"> База данных</label>
+            <label class="opt"><input type="radio" name="q3" value="c"> Язык разметки</label>
+          </div>
+
+          <div class="actions" style="padding-left:0;padding-right:0">
+            <button id="submitBtn" class="btn" type="submit">Submit</button>
+            <button id="clearBtn2" class="link" type="button">Clear form</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="card">
+        <div class="card-body">
+          <h2 style="margin:0 0 10px 0">Result</h2>
+          <div id="result" class="resultBox">Пока пусто.</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // ВСТАВЬ СЮДА URL твоего Apps Script Web App:
+    // Вставь сюда URL твоего Apps Script Web App (/exec):
     const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzMjkUpiJ61MXvQq4xKgfUqwDQ_Y4yN1UGKcS1Y4jps936J5nqF6L8nohMm6exHGMe7/exec";
 
-    function getAnswers(form) {
-      const fd = new FormData(form);
-      const answers = {};
-      for (const [k, v] of fd.entries()) answers[k] = v;
-      return answers;
+    const screenLocation = document.getElementById("screenLocation");
+    const screenQuiz = document.getElementById("screenQuiz");
+
+    const locationSelect = document.getElementById("location");
+    const nextBtn = document.getElementById("nextBtn");
+    const clearBtn1 = document.getElementById("clearBtn1");
+    const clearBtn2 = document.getElementById("clearBtn2");
+
+    const locationLabel = document.getElementById("locationLabel");
+    const resultEl = document.getElementById("result");
+    const submitBtn = document.getElementById("submitBtn");
+
+    function resetAll() {
+      // reset UI
+      locationSelect.value = "";
+      nextBtn.disabled = true;
+
+      // reset quiz form
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("quiz").reset();
+
+      // reset result
+      resultEl.textContent = "Пока пусто.";
+      resultEl.classList.remove("error");
+
+      // go back to first screen
+      screenQuiz.classList.add("hidden");
+      screenLocation.classList.remove("hidden");
+
+      // clear saved
+      localStorage.removeItem("novomet_location");
     }
 
+    // Enable Next only when selected
+    locationSelect.addEventListener("change", () => {
+      nextBtn.disabled = !locationSelect.value;
+    });
+
+    // Clear buttons
+    clearBtn1.addEventListener("click", resetAll);
+    clearBtn2.addEventListener("click", resetAll);
+
+    // Next button -> go to quiz screen
+    nextBtn.addEventListener("click", () => {
+      const loc = locationSelect.value;
+      if (!loc) return;
+
+      localStorage.setItem("novomet_location", loc);
+      locationLabel.textContent = loc;
+
+      screenLocation.classList.add("hidden");
+      screenQuiz.classList.remove("hidden");
+
+      // scroll to top for nice "page" feel
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // Restore location if refresh happened mid-way
+    const savedLoc = localStorage.getItem("novomet_location");
+    if (savedLoc) {
+      locationSelect.value = savedLoc;
+      nextBtn.disabled = false;
+      locationLabel.textContent = savedLoc;
+      screenLocation.classList.add("hidden");
+      screenQuiz.classList.remove("hidden");
+    }
+
+    // Submit quiz -> send to Apps Script as FormData
     document.getElementById("quiz").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const btn = document.getElementById("submitBtn");
-      btn.disabled = true;
-
-      const payload = {
-        testId: "demo_test",
-        name: document.getElementById("name").value || "",
-        email: document.getElementById("email").value || "",
-        answers: getAnswers(e.target),
-      };
-
-      const resultEl = document.getElementById("result");
+      resultEl.classList.remove("error");
       resultEl.textContent = "Отправляю...";
+      submitBtn.disabled = true;
+
+      const loc = localStorage.getItem("novomet_location") || locationSelect.value || "";
+      if (!loc) {
+        resultEl.classList.add("error");
+        resultEl.textContent = "Ошибка: выберите локацию.";
+        submitBtn.disabled = false;
+        return;
+      }
 
       try {
-        const res = await fetch(ENDPOINT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload),
-        });
+        const fd = new FormData(e.target);
+        fd.append("testId", "NLS-QHSE-P80-stage3");
+        fd.append("name", document.getElementById("name").value || "");
+        fd.append("email", document.getElementById("email").value || "");
+        fd.append("location", loc);
 
+        const res = await fetch(ENDPOINT_URL, { method: "POST", body: fd });
         const data = await res.json();
+
         if (!data.ok) throw new Error(data.error || "Unknown error");
         resultEl.textContent = data.message;
+
       } catch (err) {
+        resultEl.classList.add("error");
         resultEl.textContent = "Ошибка: " + err.message;
       } finally {
-        btn.disabled = false;
+        submitBtn.disabled = false;
       }
     });
   </script>
