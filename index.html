@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Тест (demo)</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;max-width:760px;margin:24px auto;padding:0 16px}
+    .card{border:1px solid #ddd;border-radius:12px;padding:16px;margin:14px 0}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;margin:6px 0}
+    button{padding:10px 14px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    #result{white-space:pre-wrap}
+  </style>
+</head>
+<body>
+  <h1>Тест (демо)</h1>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Имя
+          <input id="name" type="text" style="width:100%;padding:8px" placeholder="Иван">
+        </label>
+      </div>
+      <div>
+        <label>Email (необязательно)
+          <input id="email" type="email" style="width:100%;padding:8px" placeholder="ivan@mail.com">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <form id="quiz" class="card">
+    <h2>Вопрос 1</h2>
+    <p>2 + 2 = ?</p>
+    <label><input type="radio" name="q1" value="a"> 3</label>
+    <label><input type="radio" name="q1" value="b"> 4</label>
+    <label><input type="radio" name="q1" value="c"> 5</label>
+
+    <h2>Вопрос 2</h2>
+    <p>Столица Испании?</p>
+    <label><input type="radio" name="q2" value="a"> Мадрид</label>
+    <label><input type="radio" name="q2" value="b"> Барселона</label>
+    <label><input type="radio" name="q2" value="c"> Валенсия</label>
+
+    <h2>Вопрос 3</h2>
+    <p>HTML — это…</p>
+    <label><input type="radio" name="q3" value="a"> Язык программирования</label>
+    <label><input type="radio" name="q3" value="b"> База данных</label>
+    <label><input type="radio" name="q3" value="c"> Язык разметки</label>
+
+    <br>
+    <button id="submitBtn" type="submit">Отправить</button>
+  </form>
+
+  <div class="card">
+    <h2>Результат</h2>
+    <div id="result">Пока пусто.</div>
+  </div>
+
+  <script>
+    // ВСТАВЬ СЮДА URL твоего Apps Script Web App:
+    const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzMjkUpiJ61MXvQq4xKgfUqwDQ_Y4yN1UGKcS1Y4jps936J5nqF6L8nohMm6exHGMe7/exec";
+
+    function getAnswers(form) {
+      const fd = new FormData(form);
+      const answers = {};
+      for (const [k, v] of fd.entries()) answers[k] = v;
+      return answers;
+    }
+
+    document.getElementById("quiz").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+
+      const payload = {
+        testId: "demo_test",
+        name: document.getElementById("name").value || "",
+        email: document.getElementById("email").value || "",
+        answers: getAnswers(e.target),
+      };
+
+      const resultEl = document.getElementById("result");
+      resultEl.textContent = "Отправляю...";
+
+      try {
+        const res = await fetch(ENDPOINT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || "Unknown error");
+        resultEl.textContent = data.message;
+      } catch (err) {
+        resultEl.textContent = "Ошибка: " + err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
